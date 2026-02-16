@@ -15,7 +15,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://todo-fullstack-backend-nhbofe139-ameen-khans-projects.vercel.app';
+const API_BASE_URL = '';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
@@ -84,14 +84,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         requestBody = formData;
       }
 
-      const response = await fetch(`${API_BASE_URL}/api/${endpoint}`, {
+      const response = await fetch(`/api/${endpoint}`, {
         method: 'POST',
         headers: headers,
         body: requestBody,
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
+        let errorData;
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          errorData = await response.json();
+        } else {
+          errorData = await response.text();
+        }
         throw new Error(errorData.detail || `Error: ${response.status} ${response.statusText}`);
       }
 
