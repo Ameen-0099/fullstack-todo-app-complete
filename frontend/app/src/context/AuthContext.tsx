@@ -61,31 +61,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const commonAuthLogic = async (
     endpoint: string,
-    body: any,
+    body: Record<string, string>,
     contentType: 'application/json' | 'application/x-www-form-urlencoded'
   ) => {
     setIsLoading(true);
     setError(null);
     try {
+      let requestBody: BodyInit;
       const headers: HeadersInit = {
         'Accept': 'application/json',
       };
+
       if (contentType === 'application/json') {
         headers['Content-Type'] = 'application/json';
-        body = JSON.stringify(body);
+        requestBody = JSON.stringify(body);
       } else { // form-urlencoded for login
         headers['Content-Type'] = 'application/x-www-form-urlencoded';
         const formData = new URLSearchParams();
         for (const key in body) {
           formData.append(key, body[key]);
         }
-        body = formData;
+        requestBody = formData;
       }
 
       const response = await fetch(`${API_BASE_URL}/api/${endpoint}`, {
         method: 'POST',
         headers: headers,
-        body: body,
+        body: requestBody,
       });
 
       if (!response.ok) {
@@ -104,8 +106,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         throw new Error("Failed to decode user from token.");
       }
-    } catch (err: any) {
-      setError(err.message || 'An unknown error occurred.');
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An unknown error occurred.');
+      }
       setToken(null);
       setUser(null);
       localStorage.removeItem('access_token');

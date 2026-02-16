@@ -68,8 +68,12 @@ export default function Home() {
       }
       const data: Task[] = await response.json();
       setTasks(data);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An unknown error occurred while fetching tasks.');
+      }
     } finally {
       setLoading(false);
     }
@@ -93,8 +97,12 @@ export default function Home() {
       }
       setNewTaskTitle('');
       fetchTasks();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An unknown error occurred while creating the task.');
+      }
     }
   };
 
@@ -110,8 +118,12 @@ export default function Home() {
         throw new Error(`Error: ${response.status} ${response.statusText}`);
       }
       fetchTasks();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An unknown error occurred while updating the task.');
+      }
     }
   };
 
@@ -132,8 +144,12 @@ export default function Home() {
       setEditedTaskTitle('');
       setEditedTaskDescription(null);
       fetchTasks(); // Refresh the task list
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An unknown error occurred while updating the task.');
+      }
     }
   };
 
@@ -149,8 +165,12 @@ export default function Home() {
         throw new Error(`Error: ${response.status} ${response.statusText}`);
       }
       fetchTasks();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An unknown error occurred while deleting the task.');
+      }
     }
   };
 

@@ -1,0 +1,26 @@
+{
+  "builds": [
+    {
+      "src": "frontend/app/next.config.ts",
+      "use": "@vercel/next",
+      "config": { "distDir": "frontend/app/.next" }
+    },
+    {
+      "src": "backend/main.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/backend/main.py"
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/frontend/app"
+    }
+  ]
+}
